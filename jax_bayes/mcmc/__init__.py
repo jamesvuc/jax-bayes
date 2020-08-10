@@ -6,3 +6,5 @@ from .sampler_fns import rms_langevin_fns
 from .sampler_fns import rwmh_fns
 
 from .utils import bb_mcmc
+
+from .sampler import sampler

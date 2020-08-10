@@ -34,7 +34,7 @@ EXTRA_PACKAGES = {
 setup(
     name='jax-bayes',
     version=_VERSION,
-    # url='https://github.com/deepmind/dm-haiku',
+    url='https://github.com/jamesvuc/jax-bayes',
     license='MIT',
     author='James Vuckovic',
     description='jax-bayes is a bayesian inference library for JAX.',
