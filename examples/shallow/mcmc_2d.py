@@ -9,7 +9,6 @@ import datetime as dt
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-import sys; sys.path.append('../..')
 from jax_bayes.mcmc import (langevin_fns, mala_fns, rk_langevin_fns,
 							hmc_fns, rwmh_fns, rms_langevin_fns)
 from jax_bayes.mcmc import bb_mcmc
@@ -132,16 +131,12 @@ def main():
 
 		ax.contour(X, Y, Z, alpha=0.5, cmap='Oranges')
 		# ax.hist2d(samps[:,0], samps[:,1], alpha=0.5, bins=25)
-		# sns.jointplot(samps[:,0], samps[:,1], kind="kde", height=7, space=0, ax=ax)
 		sns.kdeplot(samps[:,0], samps[:,1], shade=True, shade_lowest=True,
 					cmap='Blues', ax=ax)
 		ax.set_title(name)
 		ax.set_xlim(-2, 6)
 		ax.set_ylim(-5, 7)
 	
-
-	# axes[1,2].hist2d(init_vals[:,0], init_vals[:,1], bins=25)
-	# axes[1,2].set_title('Example Initial samples.')
 
 	plt.show()
 

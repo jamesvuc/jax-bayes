@@ -9,7 +9,6 @@ import datetime as dt
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-import sys; sys.path.append('../..')
 from jax_bayes.mcmc import (langevin_fns, mala_fns, rk_langevin_fns, hmc_fns,
 							 rwmh_fns, rms_langevin_fns)
 from jax_bayes.mcmc import bb_mcmc
