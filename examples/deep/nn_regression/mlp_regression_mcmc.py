@@ -141,6 +141,8 @@ def main():
 	ax.fill_between(plot_inputs.squeeze(-1), lower, upper, alpha=0.75)
 
 	ax.set_ylim(-10, 15)
+	ax.set_xticks([])
+	ax.set_yticks([])
 
 	plt.show()
 
