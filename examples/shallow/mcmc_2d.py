@@ -129,13 +129,15 @@ def main():
 		col = i % 3
 		ax = axes[r, c]
 
-		ax.contour(X, Y, Z, alpha=0.5, cmap='Oranges')
+		# ax.contour(X, Y, Z, alpha=0.5, cmap='Oranges')
 		# ax.hist2d(samps[:,0], samps[:,1], alpha=0.5, bins=25)
 		sns.kdeplot(samps[:,0], samps[:,1], shade=True, shade_lowest=True,
 					cmap='Blues', ax=ax)
 		ax.set_title(name)
 		ax.set_xlim(-2, 6)
 		ax.set_ylim(-5, 7)
+		ax.set_xticks([])
+		ax.set_yticks([])
 	
 
 	plt.show()
