@@ -113,7 +113,10 @@ We have provided some diverse examples, some of which are under active developme
     2. MNIST with 300-100-10 MLP
     3. CIFAR10 with a CNN
     4. Attention-based Neural Machine Translation
-![alt text](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_2d.png "2d MCMC") ![alt text](https://github.com/jamesvuc/jax-bayes/blob/master/assets/nn_regression_mcmc.png "NN regression")
+
+mcmc | nn regression 
+:-------------------------:|:-------------------------:
+![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_2d.png "2d MCMC") | ![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/nn_regression_mcmc.png "NN regression")
 
 <!-- ## Design Philosophy -->
 
