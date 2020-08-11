@@ -108,13 +108,12 @@ pip install git+https://github.com/jamesvuc/jax-bayes
 ## Examples
 We have provided some diverse examples, some of which are under active development --- see ``examples/`` for more details. As an overview:
 1. Shallow examples for sampling from regular probability distributions using MCMC and VI (such as):
-![alt text](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_2d.png "Logo Title Text 1")
 2. Deep examples for doing deep Bayesian ML (mostly with Colab)
     1. Neural Network Regession
     2. MNIST with 300-100-10 MLP
     3. CIFAR10 with a CNN
     4. Attention-based Neural Machine Translation
-![alt text](https://github.com/jamesvuc/jax-bayes/blob/master/assets/nn_regression_mcmc.png "Logo Title Text 1")
+![alt text](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_2d.png "2d MCMC") ![alt text](https://github.com/jamesvuc/jax-bayes/blob/master/assets/nn_regression_mcmc.png "NN regression")
 
 <!-- ## Design Philosophy -->
 
