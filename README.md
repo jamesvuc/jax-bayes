@@ -68,7 +68,7 @@ sampled_params = get_params(sampler_state)
 ```
 
 ### Logits != Uncertainty
-Sometimes we want our neural networks to say "I don't know" (think self-driving cars, machine translation, etc) but, as well-illustrated out in http://proceedings.mlr.press/v48/gal16.pdf, the logits of a neural network should not serve a substitute for uncertainty. This library allows you to model *weight uncertainty* about the data by sampling from the posterior rather than optimizing it. You can also take advantge of occam's razor and other benefits of Bayesian statistics.
+Sometimes we want our neural networks to say "I don't know" (think self-driving cars, machine translation, etc) but, as illustrated in [this paper](http://proceedings.mlr.press/v48/gal16.pdf) or [`examples/deep/mnist`](https://github.com/jamesvuc/jax-bayes/tree/master/examples/deep/mnist), the logits of a neural network should not serve a substitute for uncertainty. This library allows you to model *weight uncertainty* about the data by sampling from the posterior rather than optimizing it. You can also take advantge of occam's razor and other benefits of Bayesian statistics.
 
 ## Installation
 jax-bayes requires jax>=0.1.74 and jaxlib>=0.1.15 as separate dependencies, since jaxlib needs to be [installed](https://github.com/google/jax#pip-installation) for the accelerator (CPU / GPU / TPU).

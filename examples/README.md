@@ -9,13 +9,16 @@ We provide 2 levels of examples:
 	2. MNIST
 	3. CIFAR10
 	4. Neural Machine Translation
-Some of these are nontrivial to implement with current Bayesian methods. See the "examples matrix" below for the status of each example
 
- | optimization | MCMC | VI
-:-------------------------:|:-------------------------:
+Some of these are nontrivial to implement with current Bayesian methods.
+
+*current status*:
+
+ example | optimization | MCMC | VI
+:--:|:--:|:--:|:--:
 nn regression | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 MNIST | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-CIFAR10 | | | 
-NMT | | | 
+CIFAR10
+NMT
 
 <!-- TODO: Talk about bayesian stuff, integrating out parameters rather than optimizing them. These provide integration algorithms. Use mathjax -->
