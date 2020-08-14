@@ -2,11 +2,11 @@
 High-dimensional Bayesian inference with Python and Jax.
 
 ## Overview
-jax-bayes is designed to accelerate research in high-dimensional Bayesian inference, specifically for deep neural networks. It is built on [Jax](https://github.com/google/jax) 
+jax-bayes is designed to accelerate research in high-dimensional Bayesian inference, specifically for deep neural networks. It is built on [Jax](https://github.com/google/jax).
 
-jax-bayes supports two different methods for sampling from high-dimensional inference: 
-- **Markov Chain Monte Carlo** (MCMC) which iterates a Markov chain which has an invariant measure distribution (approximately) equal to the target distribution
-- **Variational Inference** (VI): which finds the closest (in some sense) distribution in a parameterized family to the target distribution. 
+jax-bayes supports two different methods for sampling from high-dimensional distributions: 
+- **Markov Chain Monte Carlo** (MCMC) which iterates a Markov chain which has an invariant distribution (approximately) equal to the target distribution
+- **Variational Inference** (VI): which finds the closest (in some sense) distribution in a parameterized family of distributions to the target distribution. 
 
 jax-bayes allows you to  **"bring your own JAX-based network to the Bayesian ML party"** by providing samplers that operate on arbitrary data structures of JAX arrays and JAX transformations. You can also define your own sampler in terms of JAX arrays and lift them to general-purpose samplers (using the same approach as in [``jax.experimental.optimizers``](https://jax.readthedocs.io/en/latest/_modules/jax/experimental/optimizers.html))
 
@@ -29,7 +29,7 @@ def logprob_fn(batch):
         hk.Linear(10),
     ])
     logits = mlp(batch['images'])
-    return jnp.mean(softmax_cross_entropy(logits, batch['labels']))
+    return - jnp.mean(softmax_cross_entropy(logits, batch['labels']))
 
 logprob = hk.transform(logprob_fn)
 
@@ -106,13 +106,13 @@ pip install git+https://github.com/jamesvuc/jax-bayes
     - ``jax_bayes.variational.diag_mvn_fns`` (diagonal multivariate gaussian family)
 
 ## Examples
-We have provided some diverse examples, some of which are under active development --- see ``examples/`` for more details. As an overview:
-1. Shallow examples for sampling from regular probability distributions using MCMC and VI (such as):
+We have provided some diverse examples, some of which are under active development --- see ``examples/`` for more details. At a high level, we provide:
+1. Shallow examples for sampling from regular probability distributions using MCMC and VI.
 2. Deep examples for doing deep Bayesian ML (mostly with Colab)
     1. Neural Network Regession
     2. MNIST with 300-100-10 MLP
     3. CIFAR10 with a CNN
-    4. Attention-based Neural Machine Translation
+    4. Attention-based RNN Neural Machine Translation
 
 mcmc | nn regression 
 :-------------------------:|:-------------------------:
