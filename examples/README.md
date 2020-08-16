@@ -27,14 +27,14 @@ NMT | :heavy_check_mark:
 Here are visualizations from some of the examples:
 
 ### `examples/shallow/mcmc_1d.py`
-[](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_1d.png "1d MCMC")
+![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_1d.png "1d MCMC")
 
 ### `examples/shallow/mcmc_2d.py`
 
-[](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_2d.png "2d MCMC")
+![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_2d.png "2d MCMC")
 
 ### `examples/shallow/variational_2d.py`
-[](https://github.com/jamesvuc/jax-bayes/blob/master/assets/variational_2d.png "2d variational")
+![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/variational_2d.png "2d variational")
 
 ### `examples/deep/nn_regression/mlp_regression_mcmc.py`
-[](https://github.com/jamesvuc/jax-bayes/blob/master/assets/nn_regression_mcmc.png "2d variational")
+![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/nn_regression_mcmc.png "2d variational")
