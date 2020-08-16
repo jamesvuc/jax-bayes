@@ -114,6 +114,8 @@ We have provided some diverse examples, some of which are under active developme
     3. CIFAR10 with a CNN
     4. Attention-based RNN Neural Machine Translation
 
+*Note: If you are familiar with ML and are looking to learn how to use JAX, these examples include regular ML versions that are relatively self-contained*
+
 mcmc | nn regression 
 :-------------------------:|:-------------------------:
 ![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/mcmc_2d.png "2d MCMC") | ![](https://github.com/jamesvuc/jax-bayes/blob/master/assets/nn_regression_mcmc.png "NN regression")

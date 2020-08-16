@@ -18,7 +18,7 @@ Some of these are nontrivial to implement with current Bayesian methods.
 :--:|:--:|:--:|:--:
 nn regression | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 MNIST | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-CIFAR10
-NMT
+CIFAR10 | :heavy_check_mark: | :heavy_check_mark:
+NMT | :heavy_check_mark:
 
 <!-- TODO: Talk about bayesian stuff, integrating out parameters rather than optimizing them. These provide integration algorithms. Use mathjax -->
