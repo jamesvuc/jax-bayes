@@ -2,8 +2,8 @@ from collections import namedtuple
 import functools
 
 import jax
-from jax.util import partial, safe_zip, safe_map, unzip2
-from jax.tree_util import tree_flatten, tree_unflatten, register_pytree_node
+from jax._src.util import partial, safe_zip, safe_map, unzip2
+from jax._src.tree_util import tree_flatten, tree_unflatten, register_pytree_node
 
 from ..mcmc.sampler import SamplerKeys, SamplerState
 
