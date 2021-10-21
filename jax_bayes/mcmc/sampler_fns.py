@@ -365,7 +365,7 @@ def rwmh_fns(base_key, num_samples=10, step_size=1e-3,
     def propose(i, g, x, key):
         key, next_key = jax.random.split(key)
         Z = jax.random.normal(key, x.shape)
-        return x + 0.5 * (step_size(i) ** 2) * g + step_size(i) * Z, next_key
+        return x + step_size(i) * Z, next_key
 
     def update(i, logp_x, logp_xprop, g, x, gprop, xprop, key):
         key, next_key = jax.random.split(key)
@@ -374,7 +374,6 @@ def rwmh_fns(base_key, num_samples=10, step_size=1e-3,
         log_alpha = logp_xprop - logp_x
 
         accept_idxs = jnp.log(U) < log_alpha
-
         accept_idxs = match_dims(accept_idxs, x)
         mask = accept_idxs.astype(jnp.float32)
 

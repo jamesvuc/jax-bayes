@@ -93,7 +93,7 @@ def main():
 	t = dt.datetime.now()
 	samps = bb_mcmc(logprob, init_vals, rwmh_fns, num_iters = n_iters, 
 				num_samples = n_samples, seed=0, step_size = 0.05, 
-				init_dist='uniform', init_stddev=5.0)
+				init_dist='uniform', init_stddev=5.0, recompute_grad=True)
 	print('done RW MH in' , dt.datetime.now()-t,'\n')
 	allsamps.append(samps)
 
