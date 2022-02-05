@@ -5,6 +5,6 @@ from .sampler_fns import hmc_fns
 from .sampler_fns import rms_langevin_fns
 from .sampler_fns import rwmh_fns
 
-from .utils import bb_mcmc
+from .utils import blackbox_mcmc, init_distributions
 
-from .sampler import sampler
+from .sampler import sampler, SamplerState, SamplerKeys

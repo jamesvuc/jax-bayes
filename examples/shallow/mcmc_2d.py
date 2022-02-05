@@ -5,13 +5,19 @@ import jax.numpy as np
 import jax.scipy.stats.multivariate_normal as mvn
 
 import itertools, math
-import datetime as dt
+import time
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-from jax_bayes.mcmc import (langevin_fns, mala_fns, rk_langevin_fns,
-							hmc_fns, rwmh_fns, rms_langevin_fns)
-from jax_bayes.mcmc import bb_mcmc
+from jax_bayes.mcmc import (
+	langevin_fns,
+	mala_fns,
+	rk_langevin_fns,
+	hmc_fns,
+	rms_langevin_fns,
+	rwmh_fns
+)
+from jax_bayes.mcmc import blackbox_mcmc as bb_mcmc
 
 def make_logprob():
 
@@ -49,52 +55,54 @@ def main():
 
 	#====== Tests =======
 
-	t = dt.datetime.now()
+	t = time.time()
 	print('running 2d tests ...')
-	samps = bb_mcmc(logprob, init_vals, langevin_fns, num_iters = n_iters, 
-				num_samples = n_samples, seed=0, step_size = 0.05, 
-				init_dist='uniform', init_stddev=5.0)
-	print('done langevin in', dt.datetime.now()-t,'\n')
+	samps = bb_mcmc(
+		logprob, init_vals, langevin_fns, num_iters=n_iters, 
+		num_samples=n_samples, seed=0, step_size=0.05, 
+		init_dist='uniform', init_stddev=5.0)
+	print('done langevin in', time.time()-t,'\n')
 	allsamps.append(samps)
 
-
-
-	t = dt.datetime.now()
-	samps = bb_mcmc(logprob, init_vals, mala_fns, num_iters = n_iters, 
-				num_samples = n_samples, seed=0, step_size = 0.05, 
-				init_dist='uniform', init_stddev=5.0, recompute_grad=True)
-	print('done MALA in', dt.datetime.now()-t,'\n')
+	t = time.time()
+	samps = bb_mcmc(
+		logprob, init_vals, mala_fns, num_iters=n_iters, 
+		num_samples=n_samples, seed=0, step_size=0.05, 
+		init_dist='uniform', init_stddev=5.0, recompute_grad=True)
+	print('done MALA in', time.time()-t,'\n')
 	allsamps.append(samps)
 
 	
-	t = dt.datetime.now()
-	samps = bb_mcmc(logprob, init_vals, rk_langevin_fns, num_iters = n_iters, 
-				num_samples = n_samples, seed=0, step_size = 0.05, 
-				init_dist='uniform', init_stddev=5.0, recompute_grad=True)
-	print('done langevin_RK in', dt.datetime.now()-t,'\n')
+	t = time.time()
+	samps = bb_mcmc(
+		logprob, init_vals, rk_langevin_fns, num_iters=n_iters, 
+		num_samples=n_samples, seed=0, step_size=0.05, 
+		init_dist='uniform', init_stddev=5.0, recompute_grad=True)
+	print('done langevin_RK in', time.time()-t,'\n')
 	allsamps.append(samps)
 
-	t = dt.datetime.now()
-	samps = bb_mcmc(logprob, init_vals, hmc_fns, num_iters = n_iters//5, 
-				proposal_iters = 5, num_samples = n_samples, seed=0, step_size = 0.05, 
-				init_dist='uniform', init_stddev=5.0, recompute_grad=True)
-	print('done HMC in', dt.datetime.now()-t,'\n')
+	t = time.time()
+	samps = bb_mcmc(
+		logprob, init_vals, hmc_fns, num_iters=n_iters//5, 
+		proposal_iters = 5, num_samples=n_samples, seed=0, step_size=0.05,
+		init_dist='uniform', init_stddev=5.0, recompute_grad=True)
+	print('done HMC in', time.time()-t,'\n')
 	allsamps.append(samps)
 
-	t = dt.datetime.now()
-	samps = bb_mcmc(logprob, init_vals, rms_langevin_fns, num_iters = n_iters, 
-				num_samples = n_samples, seed=0, step_size = 1e-3, #1e-3 
+	t = time.time()
+	samps = bb_mcmc(logprob, init_vals, rms_langevin_fns, num_iters=n_iters, 
+				num_samples=n_samples, seed=0, step_size=1e-3, #1e-3 
 				beta=0.99, eps=1e-5,
 				init_dist='uniform', init_stddev=5.0)
-	print('done rms_langevin in', dt.datetime.now()-t,'\n')
+	print('done rms_langevin in', time.time()-t,'\n')
 	allsamps.append(samps)
 
 
-	t = dt.datetime.now()
-	samps = bb_mcmc(logprob, init_vals, rwmh_fns, num_iters = n_iters, 
-				num_samples = n_samples, seed=0, step_size = 0.05, 
+	t = time.time()
+	samps = bb_mcmc(logprob, init_vals, rwmh_fns, num_iters=n_iters, 
+				num_samples=n_samples, seed=0, step_size=0.05, 
 				init_dist='uniform', init_stddev=5.0, recompute_grad=True)
-	print('done RW MH in' , dt.datetime.now()-t,'\n')
+	print('done RW MH in' , time.time()-t,'\n')
 	allsamps.append(samps)
 
 
@@ -138,12 +146,8 @@ def main():
 		ax.set_ylim(-5, 7)
 		ax.set_xticks([])
 		ax.set_yticks([])
-	
 
 	plt.show()
-
-
-
 
 if __name__ == '__main__':
 	main()
