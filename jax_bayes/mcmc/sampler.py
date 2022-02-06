@@ -107,44 +107,6 @@ def sampler(sampler_builder):
 
             return SamplerState(new_states_flat, tree, subtrees), SamplerKeys(new_keys)
 
-        """ it would make more sense for this to accept 
-            - state (could be (x,) or (x,r), etc.)
-            - state grads
-            - prop state
-            - prop grads
-            since this summarizes all(?) the information of the sampler
-        """    
-
-        # def tree_accept(i, logp, logp_prop, trees, prop_trees, samp_keys):
-        #     # can you expose this to the user as a sort of "un-tree-ified" function?
-        #     # check that all trees in `trees` are the same
-        #     # check that all trees in `prop_trees` are the same
-        #     assert len(trees) == len(prop_trees)
-
-        #     # compute logQ(y|x)
-        #     logq_prop = sum_tree_leaves(
-        #         tree_multimap(partial(log_proposal, i), *trees, *prop_trees)
-        #     ) 
-        #     # compute #logQ(x|y)
-        #     logq_x = sum_tree_leaves(
-        #         tree_multimap(partial(log_proposal, i), *prop_trees, *trees)
-        #     ) 
-            
-        #     # compute log_alpha = log(P(xprop)/P(x) * Q(x|xprop)/Q(xprop|x))
-        #     log_alpha = logp_prop + logq_x - logp - logq_prop
-            
-        #     # split a single key from the tree keys for the global acceptance step
-        #     samp_keys_flat, samp_keys_meta = tree_flatten(samp_keys)
-        #     global_key, next_key = jax.random.split(samp_keys_flat[0])
-        #     samp_keys_flat[0] = next_key
-            
-        #     # perform global acceptance step (sample accept/reject for each tree)
-        #     # not each leaf of each tree
-        #     U = jax.random.uniform(global_key, (logp.shape[0],))
-        #     accept_idxs = jnp.log(U) < log_alpha
-            
-        #     return accept_idxs, SamplerKeys(samp_keys_flat)
-
         def tree_accept(
             i,
             logp,
@@ -155,32 +117,14 @@ def sampler(sampler_builder):
             prop_state,
             samp_keys
         ):
-            # can you expose this to the user as a sort of "un-tree-ified" function?
-            # check that all trees in `trees` are the same
-            # check that all trees in `prop_trees` are the same
-            # assert len(trees) == len(prop_trees)
-            # assert grad_treedef == grad
 
             states_flat, tree, subtrees = state
             grad_flat, tree2 = tree_flatten(grad_tree)
 
             prop_states_flat, prop_tree, prop_subtrees = prop_state
             prop_grad_flat, prop_tree2 = tree_flatten(prop_grad_tree)
-            # could check that tree2 == prop_tree2
 
-            # TRIPLE CHECK THIS ORDERING w.r.t. THE SIGNATURE OF LOG_PROPOSAL
             # compute logQ(xprop|x)
-            # logq_prop = sum_tree_leaves(
-            #     tree_multimap(partial(log_proposal, i), 
-            #         grad_flat, states_flat, prop_grad_flat, prop_states_flat
-            #     )
-            # )
-            # # compute #logQ(x|xprop)
-            # logq_x = sum_tree_leaves(
-            #     tree_multimap(partial(log_proposal, i), 
-            #         prop_grad_flat, prop_states_flat, grad_flat, states_flat
-            #     )
-            # ) 
             logq_prop = sum(
                 map(partial(log_proposal, i), 
                     grad_flat, states_flat, prop_grad_flat, prop_states_flat
@@ -257,9 +201,6 @@ def sampler(sampler_builder):
         def tree_get_params(samp_state, **kwargs):
             states_flat, tree, subtrees = samp_state
             states = map(tree_unflatten, subtrees, states_flat)
-            # params = map(get_params, states)
-            # _get_params = lambda s: get_params(s, **kwargs)
-            # params = map(_get_params, states)
             params = (get_params(s, **kwargs) for s in states)
             return tree_unflatten(tree, params)
 
