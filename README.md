@@ -4,6 +4,8 @@ High-dimensional Bayesian inference with Python and Jax.
 ## Overview
 jax-bayes is designed to accelerate research in high-dimensional Bayesian inference, specifically for deep neural networks. It is built on [Jax](https://github.com/google/jax).
 
+***NOTE: the `jax_bayes.mcmc` api was updated on 02/05/2022 to version 0.1.0 and is not backwards compatible with the previous version 0.0.1. The changes are minor, and they fix a significant bug. See [this PR](https://github.com/jamesvuc/jax-bayes/pull/1) for more details.***
+
 jax-bayes supports two different methods for sampling from high-dimensional distributions: 
 - **Markov Chain Monte Carlo** (MCMC) which iterates a Markov chain which has an invariant distribution (approximately) equal to the target distribution
 - **Variational Inference** (VI): which finds the closest (in some sense) distribution in a parameterized family of distributions to the target distribution. 
@@ -38,7 +40,7 @@ logprob = hk.transform(logprob_fn)
 #instantiate the sampler
 key = jax.random.PRNGKey(0)
 from jax_bayes.mcmc import langevin_fns
-init, propose, update, get_params = langevin_fns(key, lr=1e-3)
+init, propose, accept, update, get_params = langevin_fns(key, lr=1e-3)
 
 #define the mcmc step
 @jax.jit
@@ -50,8 +52,9 @@ def mcmc_step(state, keys, batch):
     g = jax.vmap(jax.grad(batch_logprob))(params)
 
     #omiting some unused arguments for this example
-    propose_state, new_keys = sampler_propose(g, state, keys, ...)
-    next_state, new_keys = sampler_update(propose_state, new_keys, ...)
+    propose_state, new_keys = propose(g, state, keys, ...)
+    accept_idxs, new_keyes = accept(g, state, ..., prop_state, ...) # not ncessary for langevin algorithm
+    next_state, new_keys = update(accept_idxs, state, propose_state, new_keys, ...)
 
     return next_state, new_keys
 
@@ -84,7 +87,7 @@ pip install git+https://github.com/jamesvuc/jax-bayes
     ```python
         def sampler(*args, **kwargs):
             ...
-            return init, propose, update, get_params
+            return init, log_proposal, propose, update, get_params
     ```
     where the returned functions have specific signatures. 
     - A bunch of samplers:
