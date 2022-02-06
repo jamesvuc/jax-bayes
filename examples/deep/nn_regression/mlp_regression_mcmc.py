@@ -1,3 +1,5 @@
+
+
 import numpy as np
 np.random.seed(0)
 
@@ -10,11 +12,17 @@ import jax
 from tqdm import tqdm, trange
 from matplotlib import pyplot as plt
 
-from jax_bayes.mcmc import hmc_fns
 from jax_bayes.utils import confidence_bands
+from jax_bayes.mcmc import (
+	# langevin_fns,
+	mala_fns,
+	# hmc_fns,
+)
 
 #could use any of the samplers modulo hyperparameters
-sampler_fns = hmc_fns
+# sampler_fns = hmc_fns
+# sampler_fns = langevin_fns
+sampler_fns = mala_fns
 
 def build_dataset():
 	n_train, n_test, d = 200, 100, 1
@@ -48,14 +56,19 @@ def main():
 	xy_train, xy_test = build_dataset()
 	(x_train, y_train), (x_test, y_test) = xy_train, xy_test
 
-	lr = 1e-3
+	# lr = 1e-3
+	# reg = 0.1
+	# lik_var = 0.5
+
+	# lr = 1e-1
+	lr = 1e-4
 	reg = 0.1
 	lik_var = 0.5
 
 	net = hk.transform(net_fn)
 	key = jax.random.PRNGKey(0)
 
-	sampler_init, sampler_propose, sampler_update, sampler_get_params = \
+	sampler_init, sampler_propose, sampler_accept, sampler_update, sampler_get_params = \
 		sampler_fns(key, num_samples=10, step_size=lr, init_stddev=5.0)
 
 
@@ -73,32 +86,39 @@ def main():
 		return log_lik + log_prior
 
 	@jax.jit
-	def sampler_step(i, sampler_state, keys, batch):
-		params = sampler_get_params(sampler_state)
+	def sampler_step(i, state, keys, batch):
+		# print(state)
+		# input()
+		params = sampler_get_params(state)
 		logp = lambda params:logprob(params, batch)
 		fx, dx = jax.vmap(jax.value_and_grad(logp))(params)
 		
 		fx_prop, dx_prop = fx, dx
+		# fx_prop, prop_state, dx_prop, new_keys = fx, state, dx, keys
+		prop_state, keys = sampler_propose(i, dx, state, keys)
 
 		# for RK-langevin and MALA --- recompute gradients
-		# prop_params = sampler_get_params(sampler_prop_state)
-		# fx_prop, dx_prop = jax.vmap(jax.value_and_grad(logp))(prop_params)
+		prop_params = sampler_get_params(prop_state)
+		fx_prop, dx_prop = jax.vmap(jax.value_and_grad(logp))(prop_params)
 		
 		# for HMC
-		sampler_prop_state, dx_prop, new_keys = sampler_state, dx, keys
-		for j in range(5): #5 iterations of the leapfrog integrator
-			sampler_prop_state, new_keys = \
-				sampler_propose(i, dx_prop, sampler_prop_state, new_keys)
+		# prop_state, dx_prop, keys = state, dx, keys
+		# for j in range(5): #5 iterations of the leapfrog integrator
+		# 	prop_state, keys = \
+		# 		sampler_propose(i, dx_prop, prop_state, keys)
 			
-			prop_params = sampler_get_params(sampler_prop_state)
-			fx_prop, dx_prop = jax.vmap(jax.value_and_grad(logp))(prop_params)
+		# 	prop_params = sampler_get_params(prop_state)
+		# 	fx_prop, dx_prop = jax.vmap(jax.value_and_grad(logp))(prop_params)
 
-		sampler_state, new_keys = sampler_update(i, fx, fx_prop, 
-												 dx, sampler_state, 
-												 dx_prop, sampler_prop_state, 
-												 new_keys)
+		accept_idxs, keys = sampler_accept(
+			i, fx, fx_prop, dx, state, dx_prop, prop_state, keys
+		)
+		state, keys = sampler_update(
+            i, accept_idxs, dx, state, dx_prop, prop_state, keys
+        )
+
 		
-		return sampler_state, new_keys
+		return state, keys
 
 	# ======= Sampling ======
 
@@ -108,7 +128,8 @@ def main():
 	
 	#do the sampling
 	for step in trange(5000):
-		if step % 250 == 0:
+		# if step % 250 == 0:
+		if False:
 			sampler_params = sampler_get_params(sampler_state)
 			logp = lambda params:logprob(params, xy_train)
 			train_logp = jnp.mean(jax.vmap(logp)(sampler_params))
@@ -132,8 +153,8 @@ def main():
 	
 	f, ax = plt.subplots(1)
 	
-	ax.plot(x_train.ravel(), y_train.ravel(), 'bx', color='green')
-	ax.plot(x_test.ravel(), y_test.ravel(), 'bx', color='red')
+	ax.plot(x_train.ravel(), y_train.ravel(), 'x', color='green')
+	ax.plot(x_test.ravel(), y_test.ravel(), 'x', color='red')
 	for i in range(outputs.shape[0]):
 		ax.plot(plot_inputs, outputs[i], alpha=0.25)
 	ax.plot(plot_inputs, np.mean(outputs[:, :, 0].T, axis=1), color='black', 
