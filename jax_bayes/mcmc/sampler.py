@@ -8,7 +8,6 @@ from jax._src.tree_util import (
     tree_flatten,
     tree_unflatten,
     register_pytree_node,
-    tree_multimap
 )
 
 from jax.tree_util import tree_map, tree_leaves

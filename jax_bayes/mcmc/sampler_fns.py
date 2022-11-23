@@ -2,9 +2,8 @@ import math
 
 import jax
 import jax.numpy as jnp
-from jax.experimental.optimizers import make_schedule
+from jax.example_libraries.optimizers import make_schedule
 
-# from sampler import sampler
 from .sampler import sampler
 from .utils import init_distributions
 
