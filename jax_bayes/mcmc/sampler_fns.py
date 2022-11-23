@@ -68,7 +68,7 @@ def langevin_fns(
         key, next_key = jax.random.split(key)
         Z = jax.random.normal(key, x.shape)
         return x + step_size(i) * g + \
-            math.sqrt(2 * step_size(i) * noise_scale(i)) * Z, next_key
+            jnp.sqrt(2 * step_size(i) * noise_scale(i)) * Z, next_key
 
     def update(i, accept_idxs, g, x, gprop, xprop, key):
         key, next_key = jax.random.split(key)
@@ -130,8 +130,7 @@ def mala_fns(
     def propose(i, g, x, key, **kwargs):
         key, next_key = jax.random.split(key)
         Z = jax.random.normal(key, x.shape)
-        # return x + step_size(i) * g + math.sqrt(2 * step_size(i)) * Z, next_key
-        return x + step_size(i) * g + math.sqrt(2 * step_size(i)) * noise_scale(i) * Z, next_key
+        return x + step_size(i) * g + jnp.sqrt(2 * step_size(i)) * noise_scale(i) * Z, next_key
 
     def update(i, accept_idxs, g, x, gprop, xprop, key):
         """ if the state had additional data, you would need to accept them too"""
@@ -225,6 +224,7 @@ def hmc_fns(
     base_key,
     num_samples=10,
     step_size=1e-3,
+    noise_scale=1.0,
     init_stddev=0.1,
     init_dist='normal'
 ):
@@ -246,26 +246,27 @@ def hmc_fns(
         sampler function tuple (init, propose, update, get_params)
     """
     step_size = make_schedule(step_size)
+    noise_scale = make_schedule(noise_scale)
     if isinstance(init_dist, str):
-            init_dist = init_distributions[init_dist]
+        init_dist = init_distributions[init_dist]
     
     def dot_product(x, y):
         return jnp.sum(x * y)
 
     def log_proposal(i, g, x, gprop, xprop): #grads come first
         #computes log q(xprop|x)
-        x,r = x
-        return dot_product(r, r)
+        xprop, rprop = xprop
+        return 0.5 * noise_scale(i) * dot_product(rprop, rprop)
     log_proposal = jax.vmap(log_proposal, in_axes=(None, 0, 0, 0, 0))
 
     def init(x0, key):
-        init_key, R_key, next_key = jax.random.split(key, 3)
+        init_key, r_key, next_key = jax.random.split(key, 3)
         if num_samples == -1:
-            R = jax.random.normal(R_key, x0.shape)
-            return (x0, R), next_key
+            r = jax.random.normal(r_key, x0.shape)
+            return (x0, r*noise_scale(0)), next_key
         x = init_dist(init_key, (num_samples,) + x0.shape)
-        R = jax.random.normal(R_key, (num_samples,) + x0.shape)
-        return (x0 + init_stddev * x, R), next_key
+        r = jax.random.normal(r_key, (num_samples,) + x0.shape)
+        return (x0 + init_stddev * x, r * noise_scale(0)), next_key
 
     def propose(i, g, x, key, is_final=False):
         """
@@ -294,7 +295,7 @@ def hmc_fns(
         xnext = x * (1.0 - mask) + xprop * mask
 
         #this is for the first step of the leapfrog integrator
-        rnext = jax.random.normal(r_key, x.shape)
+        rnext = jax.random.normal(r_key, x.shape) * noise_scale(i)
         return (xnext, rnext), next_key
 
     def get_params(x):
@@ -307,6 +308,7 @@ def rms_langevin_fns(
     base_key,
     num_samples=10,
     step_size=1e-3,
+    noise_scale=1.0,
     beta=0.9,
     eps=1e-9,
     init_stddev=0.1,
@@ -330,10 +332,10 @@ def rms_langevin_fns(
         sampler function tuple (init, propose, update, get_params)
     """
     step_size = make_schedule(step_size)
+    noise_scale = make_schedule(noise_scale)
 
     if isinstance(init_dist, str):
         init_dist = init_distributions[init_dist]
-
 
     def log_proposal(*args): #grads come first
         return jnp.zeros(num_samples)
@@ -355,7 +357,7 @@ def rms_langevin_fns(
         r = beta * r + (1. - beta) * jnp.square(g)
 
         ss = step_size(i) / (jnp.sqrt(r) + eps)
-        xprop = x + ss * g + jnp.sqrt(2 * ss) * Z
+        xprop = x + ss * g + jnp.sqrt(2 * ss) * noise_scale(i) * Z
 
         return (xprop, r), next_key
     
