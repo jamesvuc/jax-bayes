@@ -110,7 +110,6 @@ def mala_fns(
     if isinstance(init_dist, str):
         init_dist = init_distributions[init_dist]
 
-    # def log_proposal(i, x, dx, xprop, dxprop):
     def log_proposal(i, g, x, gprop, xprop): #grads come first
         #computes log q(xprop|x)
         x, = x
